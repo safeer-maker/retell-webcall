@@ -1,0 +1,1070 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1760039710941,
+  "agent_name": "Ahmed PA updated greetings (copy)",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 0,
+    "conversation_flow_id": "conversation_flow_502be78f71a2"
+  },
+  "webhook_url": "http://145.241.124.21:5678/webhook/ahmed_pa_webhook",
+  "webhook_timeout_ms": 10000,
+  "language": "en-US",
+  "opt_out_sensitive_data_storage": false,
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "end_call_after_silence_ms": 30000,
+  "version": 0,
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4o-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "voice_id": "11labs-Susan",
+  "enable_backchannel": true,
+  "backchannel_words": [
+    "understood",
+    "okay",
+    "ah-han",
+    "sure"
+  ],
+  "max_call_duration_ms": 242000,
+  "interruption_sensitivity": 0.7,
+  "boosted_keywords": [
+    "ai",
+    "virtual chatbots",
+    "voice agents",
+    "automation",
+    "n8n"
+  ],
+  "ambient_sound": "static-noise",
+  "responsiveness": 0.8,
+  "normalize_for_speech": true,
+  "ring_duration_ms": 20000,
+  "voicemail_option": {
+    "action": {
+      "type": "hangup"
+    }
+  },
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "retellLlmData": null,
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_502be78f71a2",
+    "version": 0,
+    "global_prompt": "",
+    "nodes": [
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Thanks for calling. Have a good day"
+        },
+        "name": "Terminate Call",
+        "edges": [
+          {
+            "id": "edge-1759006359389",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the caller is not interested."
+        },
+        "id": "node-1759006359389",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 1510.5
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1759006452268",
+          "id": "edge-1759006461641",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1759006452268",
+        "type": "end",
+        "display_position": {
+          "x": 500,
+          "y": 1636
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "tool_id": "tool-1759673400844",
+        "instruction": {
+          "type": "static_text",
+          "text": "One moment please — I’m checking your details. "
+        },
+        "name": "0.1 – Fetch Caller Info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759953525931",
+            "id": "edge-1759950066724",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if status is failure "
+            }
+          },
+          {
+            "destination_node_id": "node-1759699572460",
+            "id": "edge-1759961180667",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if status is sucessfull"
+            }
+          }
+        ],
+        "id": "node-1759674981912",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 500,
+          "y": 1216
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "0.3 Extract purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-1759696148460",
+            "id": "edge-1759695349981",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "purpose",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          },
+          {
+            "destination_node_id": "node-1759953962709",
+            "id": "edge-1759953761429",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "{{ purpose }} is empty string"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "purpose",
+            "description": "purpose of caller. about what he wants to get assistance",
+            "type": "enum",
+            "choices": [
+              "General inquiry",
+              "Project or urgent",
+              "Appointment-related"
+            ]
+          }
+        ],
+        "id": "node-1759695102678",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2500,
+          "y": 409
+        }
+      },
+      {
+        "name": "0.4 Inquire about General info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695905662",
+            "id": "edge-1759695434969",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "not willing to provide any information"
+            }
+          },
+          {
+            "id": "edge-1759954173802",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "agrees_to_provide"
+            }
+          }
+        ],
+        "id": "node-1759695434969",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 398
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "I don’t see your record — would you like to share a few quick details so I can help faster?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.5 Greeting no info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695102678",
+            "id": "edge-1759695905662",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759695905662",
+        "type": "conversation",
+        "display_position": {
+          "x": 2000,
+          "y": 420
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "No problem. How can I assist today?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.6 purpose confirmation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759696984150",
+            "id": "edge-1759696917339",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "decline the purpose"
+            }
+          },
+          {
+            "destination_node_id": "node-1759980699088",
+            "id": "edge-1759697766502",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "confirms the purpose"
+            }
+          }
+        ],
+        "id": "node-1759696148460",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 0
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "So, you’re calling about {{purpose}} — is that correct?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.8  purpose clarification ",
+        "edges": [
+          {
+            "id": "edge-1759696984150",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provide reason of call"
+            }
+          }
+        ],
+        "id": "node-1759696984150",
+        "type": "conversation",
+        "display_position": {
+          "x": 3451.4285714285716,
+          "y": -399.0211869648525
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for clarification on the purpose or reason of call."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "\"Thanks. I’ll only ask for the minimum — name, email, and company"
+        },
+        "name": "1.1 Thank & start general info capture",
+        "edges": [
+          {
+            "id": "edge-1759698152740",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the client is willing to provide generator necessary information."
+        },
+        "id": "node-1759698152740",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 2117.5
+        },
+        "interruption_sensitivity": 0,
+        "skip_response_edge": {
+          "destination_node_id": "node-1759698328218",
+          "id": "edge-1759698324787",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.2 user name",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698397822",
+            "id": "edge-1759698328218",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Provides his complete name."
+            }
+          }
+        ],
+        "id": "node-1759698328218",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 2133
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "May I have your full name, please?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.3 extract user name",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698433968",
+            "id": "edge-1759954622778",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "{{ name }} is extracted successfully"
+            }
+          },
+          {
+            "destination_node_id": "node-1759954605145",
+            "id": "edge-1759954718578",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "{{ name }} is null or empty"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "name",
+            "description": "Complete Name of the user",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759698397822",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 1000,
+          "y": 2122
+        }
+      },
+      {
+        "name": "1.4 Ask for email",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698792998",
+            "id": "edge-1759698433968",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provides email address"
+            }
+          }
+        ],
+        "id": "node-1759698433968",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 1757
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Could you share the email address you prefer we use?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.5 confirms email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698921023",
+            "id": "edge-1759698792998",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "email confirmed"
+            }
+          },
+          {
+            "destination_node_id": "node-1759954938366",
+            "id": "edge-1759954918850",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "declined email address"
+            }
+          }
+        ],
+        "id": "node-1759698792998",
+        "type": "conversation",
+        "display_position": {
+          "x": 2000,
+          "y": 1735
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "confirm email address by spelling each character."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.7 extract email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1759699006736",
+            "id": "edge-1759698921023",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "email address extracted successfully."
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "email",
+            "description": "email address of caller. ",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759698921023",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2500,
+          "y": 1403
+        }
+      },
+      {
+        "name": "1.8 get organization",
+        "edges": [
+          {
+            "destination_node_id": "node-1759699104706",
+            "id": "edge-1759699006736",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides organization"
+            }
+          },
+          {
+            "destination_node_id": "node-1759868804866",
+            "id": "edge-1759869673840",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller has privacy concerns or not like to provide info."
+            }
+          }
+        ],
+        "id": "node-1759699006736",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 1362
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Which company or organization are you calling from (if any)?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.9 extract organization",
+        "edges": [
+          {
+            "destination_node_id": "node-1759868804866",
+            "id": "edge-1759699104706",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides organization"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "organization",
+            "description": "the name of organization or company he works in.",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759699104706",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 3500,
+          "y": 1216
+        }
+      },
+      {
+        "name": "0.11 update contract info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759971854892",
+            "id": "edge-1759699572460",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides missing information. "
+            }
+          },
+          {
+            "destination_node_id": "node-1759950266968",
+            "id": "edge-1759956231392",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller confirms the information"
+            }
+          }
+        ],
+        "id": "node-1759699572460",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 1210
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Hi {{ name }}. I got these information for your number. can you please confirm it.\n\nname : {{ name }}\nemail : {{ email }}\norganization : {{ organization }}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759865319113",
+        "instruction": {
+          "type": "prompt",
+          "text": "Let me save your information."
+        },
+        "name": "1.10 Contract Add And Update",
+        "edges": [
+          {
+            "destination_node_id": "node-1759868473589",
+            "id": "edge-1759868437566",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "contact is added or updated"
+            }
+          }
+        ],
+        "id": "node-1759865324808",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 4500,
+          "y": 1392
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "1.11 Client Request",
+        "edges": [
+          {
+            "id": "edge-1759868473589",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "confirms the {{ purpose }}"
+            }
+          }
+        ],
+        "id": "node-1759868473589",
+        "type": "conversation",
+        "display_position": {
+          "x": 5000,
+          "y": 1392
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Thanks for providing the valuable information. So you are calling for {{ purpose }}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759865324808",
+            "id": "edge-1759868804866",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller confirmed information is correct."
+            }
+          }
+        ],
+        "id": "node-1759868804866",
+        "type": "conversation",
+        "display_position": {
+          "x": 4000,
+          "y": 1376
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Please confirm all the information you have provided.\n\nName : {{ name }}\nemail: {{ email }}\nphone number: {{ phone_number }}\norganization: {{ organization }}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.2 Greeting",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695102678",
+            "id": "edge-1759950266968",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759950266968",
+        "type": "conversation",
+        "display_position": {
+          "x": 2000,
+          "y": 1238
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Thanks {{ name }}, Welcome back! How can I assist?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.2 Greeting no info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695434969",
+            "id": "edge-1759953525931",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759953525931",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 420
+        },
+        "instruction": {
+          "type": "static_text",
+          "text": "\"Hello — thanks for calling Ahmad’s office. How can I help you today?\""
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.9 ask for purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695102678",
+            "id": "edge-1759953962709",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759953962709",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 420
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Can I ask why you’re calling today — is it about a meeting, a project, or a general question?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.31",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698397822",
+            "id": "edge-1759954605145",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "gets complete name"
+            }
+          }
+        ],
+        "id": "node-1759954605145",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 2133
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Sorry, could you please repeat your full name slowly?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.5.1 ask email again",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698792998",
+            "id": "edge-1759954938367",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides email address"
+            }
+          }
+        ],
+        "id": "node-1759954938366",
+        "type": "conversation",
+        "display_position": {
+          "x": 2500,
+          "y": 1757
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Could you spell you email for me, please, letter by letter?"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759865319113",
+        "instruction": {
+          "type": "prompt",
+          "text": "Let me update your information."
+        },
+        "name": "Contract  Update",
+        "edges": [
+          {
+            "destination_node_id": "node-1759956862445",
+            "id": "edge-1759956700744-zp2e18ja9",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "contact  updated"
+            }
+          }
+        ],
+        "id": "node-1759956700744",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 2500,
+          "y": 829
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "0.3 Extract purpose",
+        "edges": [
+          {
+            "id": "edge-1759956849423-swuq6x9kt",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "purpose",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          },
+          {
+            "id": "edge-1759956849423-0bb2vd4tr",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "{{ purpose }} is empty string"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "purpose",
+            "description": "purpose of caller. about what he wants to get assistance",
+            "type": "enum",
+            "choices": [
+              "General inquiry",
+              "Project or urgent",
+              "Appointment-related"
+            ]
+          }
+        ],
+        "id": "node-1759956849423",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 3500,
+          "y": 818
+        }
+      },
+      {
+        "name": "Get purpose of call",
+        "edges": [
+          {
+            "destination_node_id": "node-1759956849423",
+            "id": "edge-1759956862445",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759956862445",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 829
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "So {{ name }} what is your purpose of call. "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "variables": [
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Name of the user"
+          },
+          {
+            "name": "email",
+            "description": "the email address of caller if porvides",
+            "type": "string",
+            "choices": []
+          },
+          {
+            "name": "organization",
+            "description": "the organization the caller worked in",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "model_choice": {
+          "type": "cascading",
+          "model": "gpt-5-mini",
+          "high_priority": false
+        },
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1759956700744",
+            "id": "edge-1759971854892",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "any of the variable is updated"
+            }
+          }
+        ],
+        "id": "node-1759971854892",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2000,
+          "y": 796
+        }
+      },
+      {
+        "agent_id": "agent_2e3e3ad58071002353a391e7d7",
+        "edge": {
+          "id": "edge-1759980699088",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Transfer failed"
+          }
+        },
+        "webhook_setting": "only_source_agent",
+        "name": "Agent Transfer Node",
+        "post_call_analysis_setting": "both_agents",
+        "id": "node-1759980699088",
+        "type": "agent_swap",
+        "display_position": {
+          "x": 3564.2857142857147,
+          "y": 116.13384996141707
+        }
+      }
+    ],
+    "start_node_id": "node-1759674981912",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get the current availibility of ahmed. this function will tell you that is ahmed availabe to take any call",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed_pa_get_availability",
+        "tool_id": "tool-1759281565491",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_ahmed_available",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "the name of person "
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get the current availibility of ahmed. this function will tell you that is ahmed availabe to take any call",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed-pa-get-appointment-details",
+        "tool_id": "tool-1759403361812",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_appointment_details",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "email"
+          ],
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "{{ email_address }}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get caller info from email or phone number.",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/get-contact-info-email-phone",
+        "tool_id": "tool-1759673400844",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_caller_details",
+        "response_variables": {
+          "{{ email }}": "data.email",
+          "{{ organization }}": "data.organization",
+          "{{ phone_number }}": "data.phone_number",
+          "{{ name }}": "data.name"
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "phone",
+            "email"
+          ],
+          "properties": {
+            "phone": {
+              "type": "string",
+              "description": "the phone number of caller {{ phone_number }}"
+            },
+            "email": {
+              "type": "string",
+              "description": "email address of caller {{ email }}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "use this function to add or update the contact. \n\nTo add new contact pass \"add\" in action variable.\nTo update new contact pass \"update\" in action variable.",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed-contact-add-update",
+        "tool_id": "tool-1759865319113",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "contract_add_and_update",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "action",
+            "name",
+            "email",
+            "phone",
+            "organization"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "{{ name }}"
+            },
+            "action": {
+              "type": "string",
+              "description": "\"add\" or \"update\""
+            },
+            "phone": {
+              "type": "string",
+              "description": "{{ phone }}"
+            },
+            "email": {
+              "type": "string",
+              "description": "{{ email }}"
+            },
+            "organization": {
+              "type": "string",
+              "description": "{{ organization }}"
+            }
+          }
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-5-mini",
+      "high_priority": false
+    },
+    "default_dynamic_variables": {
+      "phone_number": "03034299925"
+    },
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 112,
+      "y": 1361.5
+    },
+    "is_published": false,
+    "knowledge_base_ids": []
+  },
+  "llmURL": null
+}

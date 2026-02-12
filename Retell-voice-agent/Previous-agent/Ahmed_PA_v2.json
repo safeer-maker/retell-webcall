@@ -1,0 +1,698 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1760000000000,
+  "agent_name": "Ahmed PA v2 - Greeter & Info Capture",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 0,
+    "conversation_flow_id": "conversation_flow_ahmed_v2"
+  },
+  "webhook_url": "http://your-webhook-url.com/webhook",
+  "webhook_timeout_ms": 8000,
+  "language": "en-US",
+  "opt_out_sensitive_data_storage": false,
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "end_call_after_silence_ms": 30000,
+  "version": 0,
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4o-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "voice_id": "11labs-Susan",
+  "enable_backchannel": true,
+  "backchannel_words": [
+    "understood",
+    "okay",
+    "mhm",
+    "I see"
+  ],
+  "max_call_duration_ms": 300000,
+  "interruption_sensitivity": 0.7,
+  "boosted_keywords": [
+    "ai",
+    "virtual chatbots",
+    "voice agents",
+    "automation",
+    "n8n"
+  ],
+  "ambient_sound": "office-ambience",
+  "responsiveness": 0.8,
+  "normalize_for_speech": true,
+  "ring_duration_ms": 20000,
+  "voicemail_option": {
+    "action": {
+      "type": "hangup"
+    }
+  },
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "retellLlmData": null,
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_d234d81b1f00",
+    "version": 0,
+    "global_prompt": "You are Sarah, Ahmad’s receptionist. Speak naturally, professionally, and briefly. Do not say you are an “AI” or “virtual assistant.” Always:\n\nGreet callers warmly and try to use their name if available ({{name}}). If name is not available, use a friendly fallback: “Hello — thanks for calling.”\n\nImmediately (before doing any verbal work) call the contact lookup webhook (get_caller_details) using the inbound phone number and any supplied email. Wait for the webhook response.\n\nIf contact data is returned, assign dynamic variables: name, email, organization, phone_number. Use these variables in prompts (example: “Hi {{name}}, thanks for calling.”). If any field is missing, only ask for the missing fields.\n\nWhen asking for PII (name, email, org, phone), ask one question at a time, confirm what you heard, and only accept confirmed values. If confidence is low, ask to spell or repeat. Limit repeated attempts to 2 then offer alternative (voicemail or human transfer).\n\nBefore saving a contact (calling contract_add_and_update), ask for consent: “May I save this information so we can recognize you next time?” If declined, do not save. If the webhook already returned data, you may confirm (not re-ask) before saving.\n\nExtract intent early (purpose of call): Appointment-related, Project / urgent, General inquiry. Confirm: “So you’re calling about {{purpose}} — is that right?” Only after confirming intent proceed to appointment / transfer flows.\n\nWork in PST by default. Always confirm times in both PST and caller timezone when scheduling.\n\nHandle webhook errors gracefully: if lookup times out (> 8 sec) say “I’m having trouble loading records — may I confirm a couple of quick details?” and fall back to short data-capture flow.\n\nKeep utterances short (≤ 12 words for prompts). Avoid exclamation-heavy text (use calm professional tone).\n\nRespect privacy: if caller says “do not save” or “no thanks” to saving contact, do not call the contract_add_and_update tool. Record the preference for the session only.\n\ntime and date : {{current_time_PST }}\n\n",
+    "nodes": [
+      {
+        "tool_id": "tool-get-caller-details",
+        "instruction": {
+          "type": "static_text",
+          "text": "Ahmad's office, this is Sarah. One moment while I pull up your details."
+        },
+        "name": "0.1 - Fetch Caller Info",
+        "edges": [
+          {
+            "destination_node_id": "node-check-info-found",
+            "id": "edge-fetch-to-check",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Tool execution completes (success or failure)"
+            }
+          }
+        ],
+        "id": "node-start-fetch-info",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 500,
+          "y": 100
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "0.2 - Check if Info was Found",
+        "id": "node-check-info-found",
+        "type": "branch",
+        "display_position": {
+          "x": 500,
+          "y": 300
+        },
+        "edges": [
+          {
+            "destination_node_id": "node-greeting-known-user",
+            "id": "edge-info-found",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "name",
+                  "operator": "exists"
+                },
+                {
+                  "left": "email",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "&&"
+            }
+          },
+          {
+            "destination_node_id": "node-greeting-unknown-user",
+            "id": "edge-info-not-found",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "name",
+                  "operator": "does_not_exist"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ]
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Hi {{name}}, welcome back! How can I help you today?"
+        },
+        "name": "1.0 - Greeting (Known User)",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-purpose",
+            "id": "edge-known-user-to-purpose",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User states their reason for calling"
+            }
+          }
+        ],
+        "id": "node-greeting-known-user",
+        "type": "conversation",
+        "display_position": {
+          "x": 250,
+          "y": 500
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thanks for calling Ahmad's office. To get started, may I have your full name, please?"
+        },
+        "name": "1.1 - Greeting & Ask Name (Unknown User)",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-name",
+            "id": "edge-ask-name-to-extract",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User provides their name"
+            }
+          }
+        ],
+        "id": "node-greeting-unknown-user",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 500
+        }
+      },
+      {
+        "name": "1.2 - Extract Name",
+        "edges": [
+          {
+            "destination_node_id": "node-ask-email",
+            "id": "edge-extract-name-to-ask-email",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "name",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "name",
+            "description": "The full name of the caller.",
+            "type": "string"
+          }
+        ],
+        "id": "node-extract-name",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 750,
+          "y": 700
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thank you, {{name}}. And what is your email address?"
+        },
+        "name": "1.3 - Ask Email",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-email",
+            "id": "edge-ask-email-to-extract",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User provides their email address"
+            }
+          }
+        ],
+        "id": "node-ask-email",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 900
+        }
+      },
+      {
+        "name": "1.4 - Extract Email",
+        "edges": [
+          {
+            "destination_node_id": "node-confirm-email",
+            "id": "edge-extract-email-to-confirm",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "email",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "email",
+            "description": "The email address of the caller.",
+            "type": "string"
+          }
+        ],
+        "id": "node-extract-email",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 750,
+          "y": 1100
+        }
+      },
+      {
+          "instruction": {
+              "type": "prompt",
+              "text": "Great. I have that as {{email}}. Is that correct?"
+          },
+          "name": "1.5 - Confirm Email",
+          "edges": [
+              {
+                  "destination_node_id": "node-ask-organization",
+                  "id": "edge-email-confirmed",
+                  "transition_condition": {
+                      "type": "prompt",
+                      "prompt": "User confirms the email is correct"
+                  }
+              },
+              {
+                  "destination_node_id": "node-ask-email-correction",
+                  "id": "edge-email-incorrect",
+                  "transition_condition": {
+                      "type": "prompt",
+                      "prompt": "User states the email is incorrect"
+                  }
+              }
+          ],
+          "id": "node-confirm-email",
+          "type": "conversation",
+          "display_position": {
+              "x": 750,
+              "y": 1300
+          }
+      },
+      {
+        "instruction": {
+            "type": "prompt",
+            "text": "My apologies. Could you please spell it out for me?"
+        },
+        "name": "1.5.1 - Ask for Email Correction",
+        "edges": [
+            {
+                "destination_node_id": "node-extract-email",
+                "id": "edge-reask-to-extract-email",
+                "transition_condition": {
+                    "type": "prompt",
+                    "prompt": "User spells out the email"
+                }
+            }
+        ],
+        "id": "node-ask-email-correction",
+        "type": "conversation",
+        "display_position": {
+            "x": 950,
+            "y": 1100
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "And which company or organization are you with?"
+        },
+        "name": "1.6 - Ask Organization",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-organization",
+            "id": "edge-ask-org-to-extract",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User provides their organization"
+            }
+          }
+        ],
+        "id": "node-ask-organization",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 1500
+        }
+      },
+      {
+        "name": "1.7 - Extract Organization",
+        "edges": [
+          {
+            "destination_node_id": "node-save-consent",
+            "id": "edge-extract-org-to-consent",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "organization",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "organization",
+            "description": "The caller's company or organization.",
+            "type": "string"
+          }
+        ],
+        "id": "node-extract-organization",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 750,
+          "y": 1700
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thank you. May I save this information for future calls?"
+        },
+        "name": "1.8 - Ask to Save Contact Info",
+        "edges": [
+          {
+            "destination_node_id": "node-add-update-contact",
+            "id": "edge-consent-given",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User agrees to save information"
+            }
+          },
+          {
+            "destination_node_id": "node-greeting-after-info-no-save",
+            "id": "edge-consent-denied",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User declines to save information"
+            }
+          }
+        ],
+        "id": "node-save-consent",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 1900
+        }
+      },
+      {
+        "tool_id": "tool-add-update-contact",
+        "instruction": {
+          "type": "static_text",
+          "text": "Perfect, saving that for you now."
+        },
+        "name": "1.9 - Add or Update Contact",
+        "edges": [
+          {
+            "destination_node_id": "node-greeting-after-info-save",
+            "id": "edge-save-to-greeting",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Tool execution completes"
+            }
+          }
+        ],
+        "id": "node-add-update-contact",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 600,
+          "y": 2100
+        },
+        "wait_for_result": true
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thank you for that information. How can I help you today?"
+        },
+        "name": "1.10 - Greeting After Info (Save)",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-purpose",
+            "id": "edge-greeting-save-to-purpose",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User states their purpose"
+            }
+          }
+        ],
+        "id": "node-greeting-after-info-save",
+        "type": "conversation",
+        "display_position": {
+          "x": 600,
+          "y": 2300
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "No problem. How can I assist you today?"
+        },
+        "name": "1.11 - Greeting After Info (No Save)",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-purpose",
+            "id": "edge-greeting-no-save-to-purpose",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User states their purpose"
+            }
+          }
+        ],
+        "id": "node-greeting-after-info-no-save",
+        "type": "conversation",
+        "display_position": {
+          "x": 900,
+          "y": 2100
+        }
+      },
+      {
+        "name": "2.0 - Extract Purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-confirm-purpose",
+            "id": "edge-extract-to-confirm-purpose",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "purpose",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "purpose",
+            "description": "The main reason for the call.",
+            "type": "enum",
+            "choices": [
+              "Appointment-related",
+              "Project or urgent question",
+              "General inquiry"
+            ]
+          }
+        ],
+        "id": "node-extract-purpose",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 250,
+          "y": 700
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Okay, so you're calling about: {{purpose}}. Is that right?"
+        },
+        "name": "2.1 - Confirm Purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-prepare-handoff",
+            "id": "edge-purpose-confirmed",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User confirms the purpose"
+            }
+          },
+          {
+            "destination_node_id": "node-clarify-purpose",
+            "id": "edge-purpose-incorrect",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User states the purpose is incorrect"
+            }
+          }
+        ],
+        "id": "node-confirm-purpose",
+        "type": "conversation",
+        "display_position": {
+          "x": 250,
+          "y": 900
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "My apologies. Could you please clarify the main reason for your call?"
+        },
+        "name": "2.2 - Clarify Purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-extract-purpose",
+            "id": "edge-clarify-to-extract-purpose",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User restates their purpose"
+            }
+          }
+        ],
+        "id": "node-clarify-purpose",
+        "type": "conversation",
+        "display_position": {
+          "x": 50,
+          "y": 1100
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thank you. Please hold one moment while I connect you to the right department."
+        },
+        "name": "3.0 - Prepare for Handoff",
+        "edges": [
+          {
+            "destination_node_id": "node-end-call",
+            "id": "edge-handoff-to-end",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Transition to end the flow"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "This is the final node. All necessary information (name, email, organization, phone_number, purpose) is now collected and ready to be passed to another agent (e.g., Appointment Bot, Transfer Bot)."
+        },
+        "id": "node-prepare-handoff",
+        "type": "conversation",
+        "display_position": {
+          "x": 250,
+          "y": 1300
+        }
+      },
+      {
+        "name": "End Call",
+        "id": "node-end-call",
+        "type": "end",
+        "display_position": {
+          "x": 250,
+          "y": 1500
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "End the call."
+        }
+      }
+    ],
+    "start_node_id": "node-start-fetch-info",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {},
+        "parameter_type": "json",
+        "method": "POST",
+        "description": "Retrieves caller details using their phone number. Returns name, email, and organization if a match is found.",
+        "type": "custom",
+        "url": "https://your-api.com/get_caller_details",
+        "tool_id": "tool-get-caller-details",
+        "args_at_root": false,
+        "timeout_ms": 8000,
+        "name": "get_caller_details",
+        "response_variables": {
+          "{{name}}": "data.name",
+          "{{email}}": "data.email",
+          "{{organization}}": "data.organization"
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "phone_number"
+          ],
+          "properties": {
+            "phone_number": {
+              "type": "string",
+              "description": "The inbound phone number of the caller, e.g., {{phone_number}}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "json",
+        "method": "POST",
+        "description": "Saves or updates a contact's information in the system.",
+        "type": "custom",
+        "url": "https://your-api.com/contract_add_and_update",
+        "tool_id": "tool-add-update-contact",
+        "args_at_root": false,
+        "timeout_ms": 8000,
+        "name": "contract_add_and_update",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "name",
+            "email",
+            "phone_number"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The caller's full name, e.g., {{name}}"
+            },
+            "email": {
+              "type": "string",
+              "description": "The caller's email address, e.g., {{email}}"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "The caller's phone number, e.g., {{phone_number}}"
+            },
+            "organization": {
+              "type": "string",
+              "description": "The caller's organization, e.g., {{organization}}"
+            }
+          }
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-4o-mini",
+      "high_priority": false
+    },
+    "default_dynamic_variables": {
+      "phone_number": "+15551234567"
+    },
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 112,
+      "y": 100
+    },
+    "is_published": false,
+    "knowledge_base_ids": []
+  },
+  "llmURL": null
+}

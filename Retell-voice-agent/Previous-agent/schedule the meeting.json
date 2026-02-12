@@ -1,0 +1,451 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1760366782591,
+  "agent_name": "schedule the meeting",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 0,
+    "conversation_flow_id": "conversation_flow_56bf40350f02"
+  },
+  "language": "en-US",
+  "opt_out_sensitive_data_storage": false,
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "version": 0,
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4o-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "voice_id": "11labs-Susan",
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.9,
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "retellLlmData": null,
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_56bf40350f02",
+    "version": 0,
+    "global_prompt": "current date and time :{{current_time_PST}}\n\n\nThe working hours are 9 to 5 on work days in los angeles or PST time zone.",
+    "nodes": [
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely inform the client about the time zone. also inform the user about caller {{ name }} and {{ email }}."
+        },
+        "name": "Welcome Node",
+        "edges": [
+          {
+            "id": "edge-1",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User needs to return the package"
+            }
+          },
+          {
+            "id": "edge-2",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "User needs to check the order status"
+            }
+          }
+        ],
+        "start_speaker": "agent",
+        "id": "start-node-1760232409622",
+        "type": "conversation",
+        "display_position": {
+          "x": 550,
+          "y": 0
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1760233214423",
+          "id": "edge-1760233155531",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1760233159299",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provided time zone or city"
+            }
+          }
+        ],
+        "id": "node-1760233159299",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 350
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask caller time zone or city name"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "id": "edge-1760233190239",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "timezone extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "timezone",
+            "description": "extract caller time zone or convert city name to respective time zone",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1760233190239",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 0,
+          "y": 700
+        }
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1760236886897",
+            "id": "edge-1760233214423",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provides both date and time"
+            }
+          }
+        ],
+        "id": "node-1760233214423",
+        "type": "conversation",
+        "display_position": {
+          "x": 1100,
+          "y": 0
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for date and time long with time zone best for meeting. "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1760236338212",
+        "name": "Get-calendar-events",
+        "edges": [
+          {
+            "destination_node_id": "node-1760236594710",
+            "id": "edge-1760236492762",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if the time slot is not between any event"
+            }
+          },
+          {
+            "destination_node_id": "node-1760236665782",
+            "id": "edge-1760236530650",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if the {{ date_time_pst }} is in between the evets time"
+            }
+          }
+        ],
+        "id": "node-1760236342549",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2750,
+          "y": 0
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1760236342549",
+            "id": "edge-1760236363394",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "date_time_extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "date_time",
+            "description": "date and time provided by client in ISO format",
+            "type": "string",
+            "choices": []
+          },
+          {
+            "name": "date_time_pst",
+            "description": "Date and time privided by customer in PST time zone using ISO format",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1760236363394",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2200,
+          "y": 0
+        }
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1760558941354",
+            "id": "edge-1760236594710",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1760236594710",
+        "type": "conversation",
+        "display_position": {
+          "x": 3300,
+          "y": 0
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The slot is available. should i book that meeting"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1760236363394",
+            "id": "edge-1760236665782",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provided the date or time"
+            }
+          }
+        ],
+        "id": "node-1760236665782",
+        "type": "conversation",
+        "display_position": {
+          "x": 3300,
+          "y": 350
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "the time slot is not available. \nrecommend any next slot that is available."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "confirm the time and date."
+        },
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1760236886897",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1760236886897",
+        "type": "conversation",
+        "display_position": {
+          "x": 1650,
+          "y": 0
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1760236363394",
+          "id": "edge-1760236915258",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1760632922151",
+            "id": "edge-1760558941354",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Provide details about meeting"
+            }
+          }
+        ],
+        "id": "node-1760558941354",
+        "type": "conversation",
+        "display_position": {
+          "x": 3842.3862075922034,
+          "y": -8.111256878551188
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for some details about the meeting."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1760632617784",
+        "name": "Book Calander Event",
+        "edges": [
+          {
+            "destination_node_id": "node-1760633373349",
+            "id": "edge-1760633295292",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "event booked successfully. "
+            }
+          }
+        ],
+        "id": "node-1760632922151",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 4411.9880694772055,
+          "y": 44.38471512358288
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1760633373349",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1760633373349",
+        "type": "conversation",
+        "display_position": {
+          "x": 4852.410461916768,
+          "y": 31.182977836754944
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": ""
+        },
+        "knowledge_base_ids": []
+      }
+    ],
+    "start_node_id": "start-node-1760232409622",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get the   start and end times of events. It will define at what time the user is busy",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/get-calendar-availability",
+        "tool_id": "tool-1760236338212",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get-calendar-events",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "date_time"
+          ],
+          "properties": {
+            "date_time": {
+              "type": "string",
+              "description": "the date and time for meeting in PST.  {{ date_time_pst }}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/calendar-book-meeting",
+        "tool_id": "tool-1760632617784",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "book_calander_event",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "title",
+            "description",
+            "summary",
+            "attendees",
+            "start_time"
+          ],
+          "properties": {
+            "summary": {
+              "type": "string",
+              "description": "short description of project "
+            },
+            "end_time": {
+              "type": "string",
+              "description": "the end time of event. if clinet provides it"
+            },
+            "start_time": {
+              "type": "string",
+              "description": "the start time of  callar {{ date_time_pst }}"
+            },
+            "title": {
+              "type": "string",
+              "description": "title of caller"
+            },
+            "attendees": {
+              "type": "string",
+              "description": "the email of caller. {{ email }}"
+            }
+          }
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-4.1"
+    },
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 0,
+      "y": 0
+    },
+    "is_published": false,
+    "knowledge_base_ids": []
+  },
+  "llmURL": null
+}

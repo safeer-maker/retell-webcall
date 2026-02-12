@@ -1,0 +1,1871 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1759534140272,
+  "agent_name": "Ahmed PA updated",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 0,
+    "conversation_flow_id": "conversation_flow_6d2212e92137"
+  },
+  "webhook_url": "http://145.241.124.21:5678/webhook/ahmed_pa_webhook",
+  "webhook_timeout_ms": 10000,
+  "language": "en-US",
+  "opt_out_sensitive_data_storage": false,
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "end_call_after_silence_ms": 30000,
+  "version": 0,
+  "is_published": false,
+  "post_call_analysis_model": "gpt-4o-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "voice_id": "11labs-Susan",
+  "enable_backchannel": true,
+  "backchannel_words": [
+    "understood",
+    "okay",
+    "ah-han",
+    "sure"
+  ],
+  "max_call_duration_ms": 242000,
+  "interruption_sensitivity": 0.7,
+  "boosted_keywords": [
+    "ai",
+    "virtual chatbots",
+    "voice agents",
+    "automation",
+    "n8n"
+  ],
+  "ambient_sound": "static-noise",
+  "responsiveness": 0.8,
+  "normalize_for_speech": true,
+  "ring_duration_ms": 20000,
+  "voicemail_option": {
+    "action": {
+      "type": "hangup"
+    }
+  },
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "retellLlmData": null,
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_6d2212e92137",
+    "version": 0,
+    "global_prompt": "You are Ahmad’s AI voice assistant, acting as his virtual receptionist and help desk.  \nYour responsibilities are:  \n- Manage appointments (check, book, reschedule, confirm).  \n- Transfer calls to Ahmad when rules permit.  \n- Always speak naturally, clearly, and politely.  \n- Ask only one question at a time.  \n- Work in PST timezone; confirm times in both caller’s timezone and PST.  \n- Follow working hours: Mon–Fri, 8am–5pm PST.  \n- Use provided tools for calendar and call handling.  \n- Confirm every action verbally with the caller before calling the functions or tool.  \n- Never guess or assume information. Always verify.  \n\ncurrent calendar and time : {{current_time_PST}} \n\n\n",
+    "nodes": [
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Hi {{ name }},  Welcome back! How can I assist?"
+        },
+        "name": "0.2 Greeting",
+        "edges": [
+          {
+            "id": "edge-1759695052451",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "start_speaker": "agent",
+        "id": "start-node-1758922935927",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 2899
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": " “Do you already have an appointment scheduled with Ahmad?”  \n"
+        },
+        "name": "Check Appointment",
+        "edges": [
+          {
+            "destination_node_id": "node-1758999197336",
+            "id": "edge-1758999103430",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Has appointment."
+            }
+          },
+          {
+            "id": "edge-1758999216605",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "No appointment"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the caller already has an appointment/meeting"
+        },
+        "id": "node-1758999103430",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 906.5
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "get email for confirmation",
+        "edges": [
+          {
+            "destination_node_id": "node-1758999514479",
+            "id": "edge-1758999197336",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Provides email"
+            }
+          },
+          {
+            "destination_node_id": "node-1758999377896",
+            "id": "edge-1758999357941",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "does not provide email"
+            }
+          }
+        ],
+        "id": "node-1758999197336",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 922
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask for their email address"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "request email again",
+        "edges": [
+          {
+            "destination_node_id": "node-1758999514479",
+            "id": "edge-1758999377896",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides email"
+            }
+          }
+        ],
+        "id": "node-1758999377896",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 735
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Request Caller to provide email again."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "confirm email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1759403334136",
+            "id": "edge-1758999432907",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "email address is correct"
+            }
+          }
+        ],
+        "id": "node-1758999432907",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 359
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Repeat {{email_address}} to confirm . "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "extract email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1758999432907",
+            "id": "edge-1758999514479",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "email address extracted successfully"
+            }
+          },
+          {
+            "destination_node_id": "node-1758999377896",
+            "id": "edge-1758999629768",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "issue in email address"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "email_address",
+            "description": "Email address of the caller",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1758999514479",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 1000,
+          "y": 724
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "ask caller what he has in mind"
+        },
+        "name": "General discussion",
+        "edges": [
+          {
+            "destination_node_id": "node-1759001439816",
+            "id": "edge-1759000395137",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "have some general quesiton"
+            }
+          },
+          {
+            "id": "edge-1759005539472",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "something urgent"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the caller has general question or need some FAQ related info"
+        },
+        "id": "node-1759000395137",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 1357.5
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Ask and Answer question",
+        "edges": [
+          {
+            "destination_node_id": "node-1759233384400",
+            "id": "edge-1759001439816",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "client has no more questions"
+            }
+          }
+        ],
+        "id": "node-1759001439816",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 1395
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "What Client have in mind and answer them form Knowledge base./"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask caller for some details . "
+        },
+        "name": "Project or urgent discussion",
+        "edges": [
+          {
+            "destination_node_id": "node-1759005696196",
+            "id": "edge-1759005600607",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller having some issue or needs to discuss project urgentely"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "if the caller has some Urgent matter or a project to discuss."
+        },
+        "id": "node-1759005600607",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 2123.5
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "check Ahmad Availability",
+        "edges": [
+          {
+            "destination_node_id": "node-1759010754830",
+            "id": "edge-1759005730663",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If Ahmed is availabe"
+            }
+          },
+          {
+            "destination_node_id": "node-1759011370584",
+            "id": "edge-1759005758714",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if AHmed is not available."
+            }
+          }
+        ],
+        "id": "node-1759005696196",
+        "else_edge": {
+          "id": "edge-1759005696196",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 500,
+          "y": 2164
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "“May I have your email address to book  meeting ?”what"
+        },
+        "name": "Booking",
+        "edges": [
+          {
+            "destination_node_id": "node-1759006135241",
+            "id": "edge-1759005995854",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides email address"
+            }
+          },
+          {
+            "destination_node_id": "node-1759006235506",
+            "id": "edge-1759006218925",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "does not provides email address"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If client needs to book an appointment"
+        },
+        "id": "node-1759005995854",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 2850.5
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "The working hours are 9 to 5 on work days in los angeles or PST time zone."
+        },
+        "name": "working hours",
+        "edges": [
+          {
+            "id": "edge-1759006124975",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759006124975",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 2523
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1759006892603",
+          "id": "edge-1759007032979",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1759006124975",
+            "id": "edge-1759006135241",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "gets email address"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "email",
+            "description": "emaill address of caller",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759006135241",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 500,
+          "y": 2534
+        }
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "email address is required to book the meetings"
+        },
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1759006235506",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759006235506",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 2888
+        },
+        "interruption_sensitivity": 0,
+        "skip_response_edge": {
+          "destination_node_id": "node-1759005995854",
+          "id": "edge-1759006338421",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Thanks for calling. Have a good day"
+        },
+        "name": "Terminate Call",
+        "edges": [
+          {
+            "id": "edge-1759006359389",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the caller is not interested."
+        },
+        "id": "node-1759006359389",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 3871
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1759006452268",
+          "id": "edge-1759006461641",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1759006452268",
+        "type": "end",
+        "display_position": {
+          "x": 500,
+          "y": 3996.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007059094",
+            "id": "edge-1759006892603",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller provides time zone or city"
+            }
+          }
+        ],
+        "id": "node-1759006892603",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask caller time zone or city name"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Extract timezone",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007224255",
+            "id": "edge-1759007059094",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "timezone extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "timezone",
+            "description": "extract caller time zone or convert city name to respective time zone",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759007059094",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2000,
+          "y": 2534
+        }
+      },
+      {
+        "name": "Date and time",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007320082",
+            "id": "edge-1759007224255",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides bot date and time"
+            }
+          }
+        ],
+        "id": "node-1759007224255",
+        "type": "conversation",
+        "display_position": {
+          "x": 2500,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for date and time best for meeting."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007939875",
+            "id": "edge-1759007303162",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759007303162",
+        "type": "conversation",
+        "display_position": {
+          "x": 4000,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "confirm {{ date_time_pst }} and {{ email }} so that you can check for calendar availability."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "extract date and time",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007650545",
+            "id": "edge-1759007320082",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "date_time_extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "date_time",
+            "description": "date and time provided by client in ISO format",
+            "type": "string",
+            "choices": []
+          },
+          {
+            "name": "date_time_pst",
+            "description": "Date and time privided by customer in PST time zone using ISO format",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759007320082",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 3000,
+          "y": 2512
+        }
+      },
+      {
+        "name": "Logic Split Node",
+        "edges": [
+          {
+            "destination_node_id": "node-1759007303162",
+            "id": "edge-1759007655297",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759007650545",
+        "else_edge": {
+          "id": "edge-1759007650545",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 3500,
+          "y": 2562
+        }
+      },
+      {
+        "name": "check calendar availability",
+        "edges": [],
+        "id": "node-1759007939875",
+        "else_edge": {
+          "destination_node_id": "node-1759010048433",
+          "id": "edge-1759007939875",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 4500,
+          "y": 2584
+        }
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759010401113",
+            "id": "edge-1759010048433",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "confirmed"
+            }
+          },
+          {
+            "destination_node_id": "node-1759011003539",
+            "id": "edge-1759010968507",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Time slot is not available"
+            }
+          }
+        ],
+        "id": "node-1759010048433",
+        "type": "conversation",
+        "display_position": {
+          "x": 5000,
+          "y": 2501
+        },
+        "instruction": {
+          "type": "static_text",
+          "text": "the slot available. should i confirm the meeting."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "set meeting",
+        "edges": [],
+        "id": "node-1759010401113",
+        "else_edge": {
+          "destination_node_id": "node-1759010446955",
+          "id": "edge-1759010401113",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 7500,
+          "y": 2584
+        }
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759010532806",
+            "id": "edge-1759010446955",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759010446955",
+        "type": "conversation",
+        "display_position": {
+          "x": 8000,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "meeting is confirmed at {{date_time_pst}}. Have a good day."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "End Call",
+        "id": "node-1759010532806",
+        "type": "end",
+        "display_position": {
+          "x": 8500,
+          "y": 2633
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "CONFIRM TO TRANSFER CALL",
+        "edges": [
+          {
+            "destination_node_id": "node-1759010894789",
+            "id": "edge-1759010754830",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "request to transfer call"
+            }
+          }
+        ],
+        "id": "node-1759010754830",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 1771
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Mr Ahmed is available right now should i transfer your call to him."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "custom_sip_headers": {},
+        "transfer_destination": {
+          "type": "predefined",
+          "number": "+18563630633"
+        },
+        "edge": {
+          "id": "edge-1759010894789",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Transfer failed"
+          }
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Transferring your call now."
+        },
+        "name": "Transfer call to Ahmed",
+        "id": "node-1759010894789",
+        "transfer_option": {
+          "type": "cold_transfer",
+          "show_transferee_as_caller": false
+        },
+        "type": "transfer_call",
+        "display_position": {
+          "x": 1500,
+          "y": 1832
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "The current time slot is not available"
+        },
+        "name": "time slot is not available",
+        "edges": [
+          {
+            "id": "edge-1759011003539",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759011003539",
+        "type": "conversation",
+        "display_position": {
+          "x": 5500,
+          "y": 2523
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1759011078434",
+          "id": "edge-1759011140656",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759011255600",
+            "id": "edge-1759011078434",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "selects time and date"
+            }
+          }
+        ],
+        "id": "node-1759011078434",
+        "type": "conversation",
+        "display_position": {
+          "x": 6000,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Suggest nearest time slot available"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759010401113",
+            "id": "edge-1759011231992-de5188fc0",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759011231992",
+        "type": "conversation",
+        "display_position": {
+          "x": 7000,
+          "y": 2523
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "confirm {{ date_time_pst }} and {{ email }} "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "extract date and time",
+        "edges": [
+          {
+            "destination_node_id": "node-1759011231992",
+            "id": "edge-1759011255600-zvldsfggp",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "date_time_extracted"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "date_time",
+            "description": "date and time provided by client in ISO format",
+            "type": "string",
+            "choices": []
+          },
+          {
+            "name": "date_time_pst",
+            "description": "Date and time privided by customer in PST time zone using ISO format",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759011255600",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 6500,
+          "y": 2512
+        }
+      },
+      {
+        "name": "Ask to book meeting",
+        "edges": [
+          {
+            "id": "edge-1759011370584",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759011370584",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 2147
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Mr Ahmad is not available right now. Ask to book an meeting"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "id": "edge-1759233384400",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759233384400",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 1395
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask to book an appointment with the tech guy. to clear more details in mind."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759281565491",
+        "name": "Get Ahmed Available",
+        "edges": [
+          {
+            "destination_node_id": "node-1759395317588",
+            "id": "edge-1759395206260",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If Ahmed is available"
+            }
+          },
+          {
+            "id": "edge-1759395230512",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Ahmad is not Available"
+            }
+          },
+          {
+            "id": "edge-1759395249264",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Ahmed is out of office"
+            }
+          }
+        ],
+        "id": "node-1759281569364",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2500,
+          "y": 17
+        },
+        "wait_for_result": true
+      },
+      {
+        "custom_sip_headers": {},
+        "transfer_destination": {
+          "type": "predefined",
+          "number": "+18563630633"
+        },
+        "edge": {
+          "id": "edge-1759395290873",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Transfer failed"
+          }
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Transferring your call now."
+        },
+        "name": "Transfer call to Ahmed",
+        "id": "node-1759395290873",
+        "transfer_option": {
+          "type": "cold_transfer",
+          "show_transferee_as_caller": false
+        },
+        "type": "transfer_call",
+        "display_position": {
+          "x": 3500,
+          "y": 61
+        }
+      },
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Let me transfer your call to Ahmed"
+        },
+        "name": "call to ahmed",
+        "edges": [
+          {
+            "id": "edge-1759395317588",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759395317588",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 0
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1759395290873",
+          "id": "edge-1759395380730",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759403361812",
+        "instruction": {
+          "type": "prompt",
+          "text": "Let me check your meeting schedule."
+        },
+        "name": "get appointment details",
+        "edges": [
+          {
+            "destination_node_id": "node-1759281569364",
+            "id": "edge-1759403482821",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The appointment is available "
+            }
+          },
+          {
+            "destination_node_id": "node-1759408730129",
+            "id": "edge-1759403528769",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "appointment is not scheduled or missed"
+            }
+          }
+        ],
+        "id": "node-1759403334136",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 2000,
+          "y": 337
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "No appointment available",
+        "edges": [
+          {
+            "id": "edge-1759408730129",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759408730129",
+        "type": "conversation",
+        "display_position": {
+          "x": 2500,
+          "y": 359
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "There is not record available for you current appointment. can we schedule another appointment. you might have meeting on different email address"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759673400844",
+        "instruction": {
+          "type": "static_text",
+          "text": "“Ahmad office, I am Sarah, I’m just pulling up your information!!! Just give a second”"
+        },
+        "name": "0.1 – Fetch Caller Info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759699421087",
+            "id": "edge-1759674992606",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If info found"
+            }
+          },
+          {
+            "destination_node_id": "node-1759695434969",
+            "id": "edge-1759695405424",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "if info not found"
+            }
+          }
+        ],
+        "id": "node-1759674981912",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": true,
+        "display_position": {
+          "x": 500,
+          "y": 4152.5
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "0.3 Extract purpose",
+        "edges": [
+          {
+            "destination_node_id": "node-1759696148460",
+            "id": "edge-1759695349981",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "purpose",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "purpose",
+            "description": "purpose of caller. about what he wants to get assistance",
+            "type": "enum",
+            "choices": [
+              "General inquiry",
+              "Project or urgent",
+              "Appointment-related"
+            ]
+          }
+        ],
+        "id": "node-1759695102678",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 0,
+          "y": 3517
+        }
+      },
+      {
+        "name": "0.4 Inquire about General info",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695905662",
+            "id": "edge-1759695434969",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "not willing to porvide any information"
+            }
+          }
+        ],
+        "id": "node-1759695434969",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 4174.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "is user willing to provide general information. "
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.5 Greeting no info",
+        "edges": [
+          {
+            "id": "edge-1759695905662",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "describe purpose of call"
+            }
+          }
+        ],
+        "id": "node-1759695905662",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 4174.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "porvide\"No problem, How can I assist\""
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.6 purpose confirmation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759696984150",
+            "id": "edge-1759696917339",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller decline the purpose"
+            }
+          },
+          {
+            "destination_node_id": "node-1759696818028",
+            "id": "edge-1759697766502",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "confirms the purpose "
+            }
+          }
+        ],
+        "id": "node-1759696148460",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 3264
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Confirm the purpose : {{ purpose }}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.7 Appointment Handling",
+        "edges": [
+          {
+            "id": "edge-1759696818028",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759696818028",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 3286
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "For appointment does the user need to book an appointment, already have an appointment or need to reschedule the appointment"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "0.8  purpose clarification ",
+        "edges": [
+          {
+            "destination_node_id": "node-1759695102678",
+            "id": "edge-1759696984150",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provide reason of call"
+            }
+          }
+        ],
+        "id": "node-1759696984150",
+        "type": "conversation",
+        "display_position": {
+          "x": 1000,
+          "y": 2899
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for clarification on the purpose or reason of call."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thanks the user to agree to provide necessary information"
+        },
+        "name": "1.1 Get general info",
+        "edges": [
+          {
+            "id": "edge-1759698152740",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "global_node_setting": {
+          "condition": "If the client is willing to provide generator necessary information."
+        },
+        "id": "node-1759698152740",
+        "type": "conversation",
+        "display_position": {
+          "x": 0,
+          "y": 4557
+        },
+        "interruption_sensitivity": 0,
+        "skip_response_edge": {
+          "destination_node_id": "node-1759698328218",
+          "id": "edge-1759698324787",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.2 user name",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698397822",
+            "id": "edge-1759698328218",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Provides his complete name."
+            }
+          }
+        ],
+        "id": "node-1759698328218",
+        "type": "conversation",
+        "display_position": {
+          "x": 500,
+          "y": 4572.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Ask for user full name"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.3 extract user name",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698433968",
+            "id": "edge-1759698397822",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides complete name"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "name",
+            "description": "Complete Name of the user",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759698397822",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 1000,
+          "y": 4583.5
+        }
+      },
+      {
+        "name": "1.4 get email address ",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698792998",
+            "id": "edge-1759698433968",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provides email address"
+            }
+          }
+        ],
+        "id": "node-1759698433968",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 4572.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask for user email address"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.5 confirms email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1759698921023",
+            "id": "edge-1759698792998",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "user confirmed the email"
+            }
+          }
+        ],
+        "id": "node-1759698792998",
+        "type": "conversation",
+        "display_position": {
+          "x": 2000,
+          "y": 4572.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "confirm email address by spelling each character."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.7 extract email address",
+        "edges": [
+          {
+            "destination_node_id": "node-1759699006736",
+            "id": "edge-1759698921023",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "email address extracted successfully."
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "email",
+            "description": "email address of caller. ",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759698921023",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 2500,
+          "y": 4583.5
+        }
+      },
+      {
+        "name": "1.8 get organization",
+        "edges": [
+          {
+            "destination_node_id": "node-1759699104706",
+            "id": "edge-1759699006736",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides organization"
+            }
+          },
+          {
+            "destination_node_id": "node-1759868804866",
+            "id": "edge-1759869673840",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller has privacy concerns or not like to provide info."
+            }
+          }
+        ],
+        "id": "node-1759699006736",
+        "type": "conversation",
+        "display_position": {
+          "x": 3000,
+          "y": 4542.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "ask user which organization or campany he works in"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "1.9 extract organization",
+        "edges": [
+          {
+            "destination_node_id": "node-1759868804866",
+            "id": "edge-1759699104706",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "provides organization"
+            }
+          }
+        ],
+        "variables": [
+          {
+            "name": "organization",
+            "description": "the name of organization or company he works in.",
+            "type": "string",
+            "choices": []
+          }
+        ],
+        "id": "node-1759699104706",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 3539.004384878545,
+          "y": 4265.292574772351
+        }
+      },
+      {
+        "name": "0.10 capture missing information",
+        "edges": [
+          {
+            "destination_node_id": "start-node-1758922935927",
+            "id": "edge-1759699461589",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "name",
+                  "operator": "exists"
+                },
+                {
+                  "left": "email",
+                  "operator": "exists"
+                },
+                {
+                  "left": "organization",
+                  "operator": "exists"
+                },
+                {
+                  "left": "phone_number",
+                  "operator": "exists"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "id": "node-1759699421087",
+        "else_edge": {
+          "destination_node_id": "node-1759699572460",
+          "id": "edge-1759699421087",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 1000,
+          "y": 3662
+        }
+      },
+      {
+        "name": "0.11 update contract info",
+        "edges": [
+          {
+            "id": "edge-1759699572460",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller provides the missing information. "
+            }
+          }
+        ],
+        "id": "node-1759699572460",
+        "type": "conversation",
+        "display_position": {
+          "x": 1500,
+          "y": 3615
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Hi {{ name }}. I got these inforamtion for your number. can you please provide the missing information.\n\nname : {{ name }}\nemail : {{ email }}\norganization : {{ organization }}"
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "tool_id": "tool-1759865319113",
+        "name": "1.10 Contract Add And Update",
+        "edges": [
+          {
+            "destination_node_id": "node-1759868473589",
+            "id": "edge-1759868437566",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "contact is added or updated"
+            }
+          }
+        ],
+        "id": "node-1759865324808",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 4500,
+          "y": 4633.5
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "1.11 Client Request",
+        "edges": [
+          {
+            "id": "edge-1759868473589",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759868473589",
+        "type": "conversation",
+        "display_position": {
+          "x": 5000,
+          "y": 4572.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "the information is been saved successfully. Now ask the client why he was calling."
+        },
+        "knowledge_base_ids": []
+      },
+      {
+        "name": "Conversation",
+        "edges": [
+          {
+            "destination_node_id": "node-1759865324808",
+            "id": "edge-1759868804866",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "caller confirmed information is correct."
+            }
+          },
+          {
+            "id": "edge-1759869000707",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1759868804866",
+        "type": "conversation",
+        "display_position": {
+          "x": 4000,
+          "y": 4524.5
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Confirm all the information of the client. confirm each information once at a time and let client confirm it.\n\nName : {{ name }}\nemail: {{ email }}\nphone number: {{ phone_number }}\norganization: {{ organization }}"
+        },
+        "knowledge_base_ids": []
+      }
+    ],
+    "start_node_id": "node-1759674981912",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get the current availibility of ahmed. this function will tell you that is ahmed availabe to take any call",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed_pa_get_availability",
+        "tool_id": "tool-1759281565491",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_ahmed_available",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "the name of person "
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get the current availibility of ahmed. this function will tell you that is ahmed availabe to take any call",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed-pa-get-appointment-details",
+        "tool_id": "tool-1759403361812",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_appointment_details",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "email"
+          ],
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "{{ email_address }}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "get caller info from email or phone number.",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/get-contact-info-email-phone",
+        "tool_id": "tool-1759673400844",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "get_caller_details",
+        "response_variables": {
+          "{{ email }}": "data.email",
+          "{{ organization }}": "data.organization",
+          "{{ phone_number }}": "data.phone_number",
+          "{{ name }}": "data.name"
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "phone",
+            "email"
+          ],
+          "properties": {
+            "phone": {
+              "type": "string",
+              "description": "the phone number of caller {{ phone_number }}"
+            },
+            "email": {
+              "type": "string",
+              "description": "email address of caller {{ email }}"
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "use this function to add or update the contact. \n\nTo add new contact pass \"add\" in action variable.\nTo update new contact pass \"update\" in action variable.",
+        "type": "custom",
+        "url": "http://145.241.124.21:5678/webhook/ahmed-contact-add-update",
+        "tool_id": "tool-1759865319113",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "name": "contract_add_and_update",
+        "response_variables": {},
+        "parameters": {
+          "type": "object",
+          "required": [
+            "action",
+            "name",
+            "email",
+            "phone",
+            "organization"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "{{ name }}"
+            },
+            "action": {
+              "type": "string",
+              "description": "\"add\" or \"update\""
+            },
+            "phone": {
+              "type": "string",
+              "description": "{{ phone }}"
+            },
+            "email": {
+              "type": "string",
+              "description": "{{ email }}"
+            },
+            "organization": {
+              "type": "string",
+              "description": "{{ organization }}"
+            }
+          }
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-5-mini",
+      "high_priority": false
+    },
+    "default_dynamic_variables": {
+      "phone_number": "03034299925"
+    },
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 112,
+      "y": 4298
+    },
+    "is_published": false,
+    "knowledge_base_ids": []
+  },
+  "llmURL": null
+}
