@@ -142,3 +142,7 @@ Thumbs.db
 # IPython
 profile_default/
 ipython_config.py
+
+package-lock.json
+yarn.lock
+

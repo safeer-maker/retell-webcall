@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@abhaybabbar/retellai-mcp-server": "^1.0.2"
+  }
+}
